@@ -44,3 +44,7 @@ module.exports.loginUser = async (req, res) => {
   }
   res.json();
 };
+
+module.exports.getUser = async (req, res) => {
+  res.json(req.user);
+}
