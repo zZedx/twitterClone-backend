@@ -15,7 +15,6 @@ const loadData = async () => {
   await Post.deleteMany({});
 
   const posts = Array.from({ length: 10 }, (_, index) => ({
-    title: `Post ${index + 1}`,
     body: `This is the body of post ${index + 1}.`,
     user: "6553214fbaa2aa00ab3800e9",
   }));
