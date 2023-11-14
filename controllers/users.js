@@ -56,6 +56,6 @@ module.exports.getUser = async (req, res) => {
 };
 
 module.exports.logoutUser = (req, res) => {
-  res.clearCookie("token", { secure: true });
+  res.clearCookie("token", { secure: true, sameSite: 'None' });
   res.json();
 };
