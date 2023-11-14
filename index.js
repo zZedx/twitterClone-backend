@@ -8,6 +8,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
 const usersRoutes = require("./routes/users");
+const postRoutes = require("./routes/posts");
 
 mongoose
   .connect(process.env.DB_URL)
@@ -29,6 +30,7 @@ app.use(
 app.use(cookieParser());
 
 app.use("/users", usersRoutes);
+app.use('/posts' , postRoutes);
 
 app.use((err, req, res, next) => {
   const { status = 500 } = err;
