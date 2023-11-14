@@ -14,6 +14,9 @@ const userSchema = new Schema({
     type: String,
     trim: true,
     minlength: 3,
+    default: function () {
+      return this.username; // Set displayName to default to username
+    },
   },
   email: {
     type: String,
@@ -30,9 +33,10 @@ const userSchema = new Schema({
   },
   avatar: {
     type: String,
-    default: "https://res.cloudinary.com/dbm00ix5k/image/upload/v1698905214/default_pfp.jpg",
+    default:
+      "https://res.cloudinary.com/dbm00ix5k/image/upload/v1698905214/default_pfp.jpg",
   },
-  avatarName:{
+  avatarName: {
     type: String,
     default: "default_pfp",
   },

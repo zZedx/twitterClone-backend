@@ -14,3 +14,15 @@ module.exports.createPost = async (req, res) => {
     await post.save();
     res.json();
 };
+
+module.exports.likePost = async (req, res) => {
+    const {id} = req.params;
+    const post = await Post.findById(id);
+    if(!post.likes.includes(req.user._id)){
+        post.likes.push(req.user._id);
+    }else{
+        post.likes = post.likes.filter(id => id.toString() !== req.user._id.toString());
+    }
+    await post.save();
+    res.json();
+}
