@@ -10,7 +10,7 @@ const cookieParser = require("cookie-parser");
 const usersRoutes = require("./routes/users");
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/twitter")
+  .connect(process.env.DB_URL)
   .then(() => {
     console.log("Mongoose Running");
   })
@@ -22,7 +22,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -36,6 +36,8 @@ app.use((err, req, res, next) => {
   res.status(status).json({ err, message: err.message });
 });
 
-app.listen(3000, () => {
-  console.log("Listening");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
 });
