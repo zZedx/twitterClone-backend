@@ -17,6 +17,7 @@ module.exports.registerUser = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure:true,
+      sameSite: 'None',
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
     res.json();
@@ -38,6 +39,7 @@ module.exports.loginUser = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure:true,
+      sameSite: 'None',
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
     res.json();

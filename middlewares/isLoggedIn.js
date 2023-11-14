@@ -3,7 +3,6 @@ const catchAsync = require('./catchAsync');
 const User = require('../models/user');
 
 const isLoggedIn = catchAsync(async (req, res, next) => {
-    console.log(req.cookies)
     const token = req.cookies.token;
     if (token) {
         try {
