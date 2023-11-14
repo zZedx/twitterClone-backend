@@ -1,4 +1,4 @@
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
@@ -18,8 +18,8 @@ module.exports.registerUser = async (req, res) => {
     const token = signToken(user._id);
     res.cookie("token", token, {
       httpOnly: true,
-      secure:true,
-      sameSite: 'None',
+      secure: true,
+      sameSite: "None",
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
     res.json();
@@ -41,14 +41,13 @@ module.exports.loginUser = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? 'None' : 'Lax',
+      sameSite: isProduction ? "None" : "Lax",
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
     });
     res.json();
   } else {
     throw new Error("Incorrect Email or Password");
   }
-  res.json();
 };
 
 module.exports.getUser = async (req, res) => {
@@ -56,6 +55,9 @@ module.exports.getUser = async (req, res) => {
 };
 
 module.exports.logoutUser = (req, res) => {
-  res.clearCookie("token", { secure: true, sameSite: 'None' });
+  res.clearCookie("token", {
+    secure: isProduction,
+    sameSite: isProduction ? "None" : "Lax",
+  });
   res.json();
 };
