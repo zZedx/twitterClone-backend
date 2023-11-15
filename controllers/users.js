@@ -54,10 +54,26 @@ module.exports.getUser = async (req, res) => {
   res.json(req.user);
 };
 
-module.exports.logoutUser = (req, res) => {
-  res.clearCookie("token", {
-    secure: isProduction,
-    sameSite: isProduction ? "None" : "Lax",
+const clearCookieAsync = async (res) => {
+  return new Promise((resolve, reject) => {
+    res.clearCookie("token", {
+      secure: isProduction,
+      sameSite: isProduction ? "None" : "Lax",
+    });
+    resolve();
   });
+};
+
+module.exports.logoutUser = async(req, res) => {
+  await clearCookieAsync(res);
   res.json();
 };
+
+module.exports.getUserProfile = async(req, res) => {
+  const { username } = req.params;
+  const user = await User.findOne({ username });
+  if (!user) {
+    throw new Error("User not found");
+  }
+  res.json(user);
+}
