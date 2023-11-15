@@ -24,7 +24,7 @@ module.exports.createPost = async (req, res) => {
 
   user.posts.push(post._id);
   await user.save();
-  
+
   res.json();
 };
 
@@ -40,4 +40,13 @@ module.exports.likePost = async (req, res) => {
   }
   await post.save();
   res.json();
+};
+
+module.exports.getPost = async (req, res) => {
+  const { id } = req.params;
+  const post = await Post.findById(id).populate(
+    "user",
+    "username avatar displayName"
+  );
+  res.json(post);
 };
