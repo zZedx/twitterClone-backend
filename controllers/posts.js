@@ -1,4 +1,5 @@
 const Post = require("../models/post");
+const User = require("../models/user");
 
 module.exports.getAllPosts = async (req, res) => {
   const posts = await Post.find().populate(
@@ -12,13 +13,18 @@ module.exports.createPost = async (req, res) => {
   const { body } = req.body;
   const { path, filename } = req.file || {};
 
+  const user = await User.findById(req.user._id);
   const post = new Post({
     body,
     image: path || "",
     imageName: filename || "",
-    user: req.user._id,
+    user: user._id,
   });
   await post.save();
+
+  user.posts.push(post._id);
+  await user.save();
+  
   res.json();
 };
 

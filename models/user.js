@@ -40,6 +40,31 @@ const userSchema = new Schema({
     type: String,
     default: "default_pfp",
   },
+  bio: {
+    type: String,
+  },
+  followers: [{
+    type : Schema.Types.ObjectId,
+    ref: "User",
+  }],
+  following: [{
+    type : Schema.Types.ObjectId,
+    ref: "User",
+  }],
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
+  ],
+  coverImage: {
+    type: String,
+    default: "",
+  },
+  coverImageName: {
+    type: String,
+    default: "",
+  },
 });
 
 userSchema.pre("save", async function (next) {
