@@ -1,3 +1,4 @@
+const Comment = require("../models/comment");
 const Post = require("../models/post");
 const User = require("../models/user");
 
@@ -30,7 +31,7 @@ module.exports.createPost = async (req, res) => {
 
 module.exports.likePost = async (req, res) => {
   const { id } = req.params;
-  const post = await Post.findById(id);
+  const post = await Post.findById(id) || await Comment.findById(id);
   if (!post.likes.includes(req.user._id)) {
     post.likes.push(req.user._id);
   } else {
@@ -44,9 +45,34 @@ module.exports.likePost = async (req, res) => {
 
 module.exports.getPost = async (req, res) => {
   const { id } = req.params;
-  const post = await Post.findById(id).populate(
-    "user",
-    "username avatar displayName"
-  );
+  const post = await Post.findById(id).populate({
+    path: "comments",
+    populate: {
+      path: "user",
+      select: "username avatar displayName",
+    },
+  }).populate({
+    path: "user",
+    select: "username avatar displayName",
+  });
   res.json(post);
+};
+
+module.exports.commentPost = async (req, res) => {
+  const { postId } = req.params;
+  const { body } = req.body;
+  const { path, filename } = req.file || {};
+
+  const user = await User.findById(req.user._id);
+  const post = await Post.findById(postId);
+  const comment = new Comment({
+    body,
+    image: path || "",
+    imageName: filename || "",
+    user: user._id,
+  });
+  await comment.save();
+  post.comments.push(comment);
+  await post.save();
+  res.json();
 };
