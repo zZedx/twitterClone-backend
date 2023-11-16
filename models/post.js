@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const Comment = require("./comment");
+const User = require("./user");
 const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
@@ -38,6 +40,26 @@ const postSchema = new Schema({
     default: Date.now,
   },
 });
+
+postSchema.pre("deleteMany", async function (next) {
+  const post = this;
+  await Comment.deleteMany({ _id: { $in: post.comments } });
+  await User.updateMany(
+    { _id: { $in: post.user } },
+    { $pull: { posts: post._id } }
+  );
+  next();
+});
+
+postSchema.pre("findOneAndDelete", async function (next) {
+  const post = this;
+  await Comment.deleteMany({ _id: { $in: post.comments } });
+  await User.updateMany(
+    { _id: { $in: post.user } },
+    { $pull: { posts: post._id } }
+  );
+  next();
+})
 
 const Post = mongoose.model("Post", postSchema);
 module.exports = Post;

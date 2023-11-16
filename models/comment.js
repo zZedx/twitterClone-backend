@@ -27,16 +27,25 @@ const commentSchema = new Schema({
       ref: "User",
     },
   ],
-//   comments: [
-//     {
-//       type: Schema.Types.ObjectId,
-//       ref: "Comment",
-//     },
-//   ],
+  //   comments: [
+  //     {
+  //       type: Schema.Types.ObjectId,
+  //       ref: "Comment",
+  //     },
+  //   ],
   createdAt: {
     type: Date,
     default: Date.now,
   },
+});
+
+commentSchema.pre("findOneAndDelete", async function (next) {
+  const comment = this;
+  await Post.updateMany(
+    { comments: { $in: comment._id } },
+    { $pull: { comments: comment._id } }
+  );
+  next();
 });
 
 const Comment = mongoose.model("Comment", commentSchema);

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
+const Post = require("./post");
 
 const userSchema = new Schema({
   username: {
@@ -72,6 +73,12 @@ userSchema.pre("save", async function (next) {
   if (user.isModified("password")) {
     user.password = await bcrypt.hash(user.password, 10);
   }
+  next();
+});
+
+userSchema.pre("deleteMany", async function (next) {
+  const user = this;
+  await Post.deleteMany({ _id: { $in: user.posts } });
   next();
 });
 
