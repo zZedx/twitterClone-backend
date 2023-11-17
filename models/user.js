@@ -44,14 +44,18 @@ const userSchema = new Schema({
   bio: {
     type: String,
   },
-  followers: [{
-    type : Schema.Types.ObjectId,
-    ref: "User",
-  }],
-  following: [{
-    type : Schema.Types.ObjectId,
-    ref: "User",
-  }],
+  followers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  following: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   posts: [
     {
       type: Schema.Types.ObjectId,
@@ -65,6 +69,14 @@ const userSchema = new Schema({
   coverImageName: {
     type: String,
     default: "",
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
   },
 });
 

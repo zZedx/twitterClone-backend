@@ -3,6 +3,7 @@ const isProduction = process.env.NODE_ENV === "production";
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { cloudinary } = require("../cloudinary");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -53,6 +54,33 @@ module.exports.loginUser = async (req, res) => {
 module.exports.getUser = async (req, res) => {
   res.json(req.user);
 };
+
+module.exports.updateUser = async (req, res) => {
+  const { user } = req;
+  const { displayName, bio } = req.body;
+  if (displayName) {
+    user.displayName = displayName;
+  }
+  if (bio) {
+    user.bio = bio;
+  }
+  if (req.files) {
+    if (req.files.avatar) {
+      if(user.avatarName !== "default_pfp"){
+        cloudinary.uploader.destroy(user.avatarName);
+      }
+      user.avatar = req.files.avatar[0].path;
+      user.avatarName = req.files.avatar[0].filename;
+    }
+    if (req.files.coverImage) {
+      cloudinary.uploader.destroy(user.coverImageName);
+      user.coverImage = req.files.coverImage[0].path;
+      user.coverImageName = req.files.coverImage[0].filename;
+    }
+  }
+  await user.save();
+  res.json();
+}
 
 const clearCookieAsync = async (res) => {
   return new Promise((resolve, reject) => {
