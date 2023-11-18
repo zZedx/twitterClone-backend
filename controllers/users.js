@@ -55,7 +55,7 @@ module.exports.getUser = async (req, res) => {
   res.json(req.user);
 };
 
-module.exports.user1 = async (req, res) => {
+module.exports.updateUser = async (req, res) => {
   const { user } = req;
   const { displayName, bio } = req.body;
   if (displayName) {
