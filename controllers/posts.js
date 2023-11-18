@@ -4,11 +4,22 @@ const Post = require("../models/post");
 const User = require("../models/user");
 
 module.exports.getAllPosts = async (req, res) => {
-  const posts = await Post.find().populate(
-    "user",
-    "username avatar displayName"
-  );
-  res.json(posts);
+  const { filter = "for-you" } = req.query;
+  if (filter === "for-you") {
+    const posts = await Post.find().populate(
+      "user",
+      "username avatar displayName"
+    );
+    res.json(posts);
+  }
+  if (filter === "following") {
+    const user = await User.findById(req.user._id).populate("following");
+    const posts = await Post.find({ user: { $in: user.following } }).populate(
+      "user",
+      "username avatar displayName"
+    );
+    res.json(posts);
+  }
 };
 
 module.exports.createPost = async (req, res) => {
