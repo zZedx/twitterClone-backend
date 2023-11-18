@@ -55,7 +55,7 @@ module.exports.getUser = async (req, res) => {
   res.json(req.user);
 };
 
-module.exports.updateUser = async (req, res) => {
+module.exports.user1 = async (req, res) => {
   const { user } = req;
   const { displayName, bio } = req.body;
   if (displayName) {
@@ -104,4 +104,20 @@ module.exports.getUserProfile = async(req, res) => {
     throw new Error("User not found");
   }
   res.json(user);
+}
+
+module.exports.followUnfollowUser = async(req, res) => {
+  const { username } = req.params;
+  const { user } = req;
+  const user1 = await User.findOne({username});
+  if (user.following.includes(user1._id)) {
+    user.following.pull(user1._id);
+    user1.followers.pull(user._id);
+  } else {
+    user.following.push(user1._id);
+    user1.followers.push(user._id);
+  }
+  await user1.save();
+  await user.save();
+  res.json();
 }

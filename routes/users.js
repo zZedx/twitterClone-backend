@@ -13,6 +13,7 @@ const {
   logoutUser,
   getUserProfile,
   updateUser,
+  followUnfollowUser,
 } = require("../controllers/users");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 
@@ -20,7 +21,7 @@ router.post("/register", catchAsync(registerUser));
 router.post("/login", catchAsync(loginUser));
 router.get("/logout", isLoggedIn, catchAsync(logoutUser));
 router.get("/getUser", isLoggedIn, catchAsync(getUser));
-
+router.put("/:username/followUnfollow", isLoggedIn, catchAsync(followUnfollowUser));
 router.patch("/updateUser",
   isLoggedIn,
   upload.fields([
@@ -29,7 +30,6 @@ router.patch("/updateUser",
   ]),
   catchAsync(updateUser)
 );
-
 router.get("/:username", isLoggedIn, catchAsync(getUserProfile));
 
 module.exports = router;
