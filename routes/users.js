@@ -14,6 +14,7 @@ const {
   getUserProfile,
   updateUser,
   followUnfollowUser,
+  searchUsers,
 } = require("../controllers/users");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 
@@ -21,6 +22,7 @@ router.post("/register", catchAsync(registerUser));
 router.post("/login", catchAsync(loginUser));
 router.get("/logout", isLoggedIn, catchAsync(logoutUser));
 router.get("/getUser", isLoggedIn, catchAsync(getUser));
+router.get("/search/:query", isLoggedIn, catchAsync(searchUsers));
 router.put("/:username/followUnfollow", isLoggedIn, catchAsync(followUnfollowUser));
 router.patch("/updateUser",
   isLoggedIn,

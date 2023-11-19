@@ -55,6 +55,12 @@ module.exports.getUser = async (req, res) => {
   res.json(req.user);
 };
 
+module.exports.searchUsers = async (req, res) => {
+  const { query } = req.params;
+  const users = await User.find({ username: { $regex: query, $options: "i" } });
+  res.json(users);
+};
+
 module.exports.updateUser = async (req, res) => {
   const { user } = req;
   const { displayName, bio } = req.body;
