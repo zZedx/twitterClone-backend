@@ -11,6 +11,16 @@ const signToken = (id) => {
   });
 };
 
+const clearCookieAsync = async (res) => {
+  return new Promise((resolve, reject) => {
+    res.clearCookie("token", {
+      secure: isProduction,
+      sameSite: isProduction ? "None" : "Lax",
+    });
+    resolve();
+  });
+};
+
 module.exports.registerUser = async (req, res) => {
   try {
     const { username, password, email } = req.body;
@@ -57,7 +67,12 @@ module.exports.getUser = async (req, res) => {
 
 module.exports.searchUsers = async (req, res) => {
   const { query } = req.params;
-  const users = await User.find({ username: { $regex: query, $options: "i" } });
+  const users = await User.find({
+    $or: [
+      { username: { $regex: query, $options: "i" } },
+      { displayName: { $regex: query, $options: "i" } },
+    ],
+  });
   res.json(users);
 };
 
@@ -72,7 +87,7 @@ module.exports.updateUser = async (req, res) => {
   }
   if (req.files) {
     if (req.files.avatar) {
-      if(user.avatarName !== "default_pfp"){
+      if (user.avatarName !== "default_pfp") {
         cloudinary.uploader.destroy(user.avatarName);
       }
       user.avatar = req.files.avatar[0].path;
@@ -86,36 +101,26 @@ module.exports.updateUser = async (req, res) => {
   }
   await user.save();
   res.json();
-}
-
-const clearCookieAsync = async (res) => {
-  return new Promise((resolve, reject) => {
-    res.clearCookie("token", {
-      secure: isProduction,
-      sameSite: isProduction ? "None" : "Lax",
-    });
-    resolve();
-  });
 };
 
-module.exports.logoutUser = async(req, res) => {
+module.exports.logoutUser = async (req, res) => {
   await clearCookieAsync(res);
   res.json();
 };
 
-module.exports.getUserProfile = async(req, res) => {
+module.exports.getUserProfile = async (req, res) => {
   const { username } = req.params;
   const user = await User.findOne({ username }).populate("posts");
   if (!user) {
     throw new Error("User not found");
   }
   res.json(user);
-}
+};
 
-module.exports.followUnfollowUser = async(req, res) => {
+module.exports.followUnfollowUser = async (req, res) => {
   const { username } = req.params;
   const { user } = req;
-  const user1 = await User.findOne({username});
+  const user1 = await User.findOne({ username });
   if (user.following.includes(user1._id)) {
     user.following.pull(user1._id);
     user1.followers.pull(user._id);
@@ -126,4 +131,17 @@ module.exports.followUnfollowUser = async(req, res) => {
   await user1.save();
   await user.save();
   res.json();
-}
+};
+
+module.exports.deleteAccount = async (req, res) => {
+  const { user } = req;
+  if (user.avatarName !== "default_pfp") {
+    cloudinary.uploader.destroy(user.avatarName);
+  }
+  if (user.coverImageName) {
+    cloudinary.uploader.destroy(user.coverImageName);
+  }
+  await User.deleteOne({ _id: user._id });
+  await clearCookieAsync(res);
+  res.json();
+};

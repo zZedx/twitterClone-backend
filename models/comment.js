@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { cloudinary } = require("../cloudinary");
+const Post = require("./post");
 const Schema = mongoose.Schema;
 
 const commentSchema = new Schema({
@@ -39,12 +41,11 @@ const commentSchema = new Schema({
   },
 });
 
-commentSchema.pre("findOneAndDelete", async function (next) {
+commentSchema.pre("deleteMany", async function (next) {
   const comment = this;
-  await Post.updateMany(
-    { comments: { $in: comment._id } },
-    { $pull: { comments: comment._id } }
-  );
+  if (comment.imageName !== "") {
+    cloudinary.uploader.destroy(comment.imageName);
+  }
   next();
 });
 

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
 const Post = require("./post");
+const Comment = require("./comment");
 
 const userSchema = new Schema({
   username: {
@@ -62,6 +63,12 @@ const userSchema = new Schema({
       ref: "Post",
     },
   ],
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   coverImage: {
     type: String,
     default: "",
@@ -88,9 +95,33 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.pre("deleteMany", async function (next) {
-  const user = this;
-  await Post.deleteMany({ _id: { $in: user.posts } });
+userSchema.pre("deleteOne", async function (next) {
+  const users = await this.model.find(this.getQuery());
+  for (let user of users) {
+    if (user.avatarName !== "default_pfp") {
+      cloudinary.uploader.destroy(user.avatarName);
+    }
+    if (user.coverImageName) {
+      cloudinary.uploader.destroy(user.coverImageName);
+    }
+    await Post.deleteMany({ _id: { $in: user.posts } });
+    await Comment.deleteMany({ user: { $in: user._id } });
+    await Post.updateMany({ likes: user._id }, { $pull: { likes: user._id } });
+    await Comment.updateMany(
+      { likes: user._id },
+      { $pull: { likes: user._id } }
+    );
+    await User.updateMany(
+      {
+        $or: [{ following: user._id }, { followers: user._id }],
+      },
+      { $pull: { following: user._id, followers: user._id } }
+    );
+    await Post.updateMany(
+      { comments: { $in: user.comments } },
+      { $pull: { comments: { $in: user.comments } } }
+    );
+  }
   next();
 });
 

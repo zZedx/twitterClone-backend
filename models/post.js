@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Comment = require("./comment");
 const User = require("./user");
+const { cloudinary } = require("../cloudinary");
 const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
@@ -43,11 +44,10 @@ const postSchema = new Schema({
 
 postSchema.pre("deleteMany", async function (next) {
   const post = this;
+  if(post.imageName !== ""){
+    cloudinary.uploader.destroy(post.imageName);
+  }
   await Comment.deleteMany({ _id: { $in: post.comments } });
-  await User.updateMany(
-    { _id: { $in: post.user } },
-    { $pull: { posts: post._id } }
-  );
   next();
 });
 

@@ -86,8 +86,10 @@ module.exports.commentPost = async (req, res) => {
     user: user._id,
   });
   await comment.save();
+  user.comments.push(comment._id);
   post.comments.push(comment);
   await post.save();
+  await user.save();
   res.json();
 };
 
@@ -114,6 +116,10 @@ module.exports.deletePost = async (req, res) => {
     await Comment.deleteMany({ _id: { $in: post.comments } });
     await User.updateOne({ _id: post.user }, { $pull: { posts: post._id } });
   } else {
+    await User.updateOne(
+      { _id: comment.user },
+      { $pull: { comments: comment._id } }
+    );
     await Post.findOneAndUpdate(
       { comments: { $in: comment._id } },
       { $pull: { comments: comment._id } }

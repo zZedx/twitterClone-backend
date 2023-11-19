@@ -15,6 +15,7 @@ const {
   updateUser,
   followUnfollowUser,
   searchUsers,
+  deleteAccount,
 } = require("../controllers/users");
 const isLoggedIn = require("../middlewares/isLoggedIn");
 
@@ -33,5 +34,6 @@ router.patch("/updateUser",
   catchAsync(updateUser)
 );
 router.get("/:username", isLoggedIn, catchAsync(getUserProfile));
+router.delete("/deleteAccount", isLoggedIn, catchAsync(deleteAccount));
 
 module.exports = router;
