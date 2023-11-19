@@ -29,6 +29,10 @@ app.use(
 );
 app.use(cookieParser());
 
+app.get("/status", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 app.use("/users", usersRoutes);
 app.use('/posts' , postRoutes);
 
