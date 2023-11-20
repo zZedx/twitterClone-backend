@@ -2,4 +2,4 @@
 
 - Frontend Repositery - https://github.com/zZedx/twitterClone-frontend
 
-- Live - https://twitter-clone-zzedx.vercel.app
+- Live - https://twitterclone-zed.vercel.app/home
