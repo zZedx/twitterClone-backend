@@ -15,7 +15,6 @@ const userSchema = new Schema({
   displayName: {
     type: String,
     trim: true,
-    minlength: 3,
     default: function () {
       return this.username; // Set displayName to default to username
     },
