@@ -1,10 +1,10 @@
 require("dotenv").config();
 
 const express = require("express");
-const {createServer} = require('node:http');
+const { createServer } = require("node:http");
 const app = express();
 const server = createServer(app);
-const {Server} = require('socket.io');
+const { Server } = require("socket.io");
 
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -32,6 +32,8 @@ app.use(cookieParser());
 
 const usersRoutes = require("./routes/users");
 const postRoutes = require("./routes/posts");
+const messageRoutes = require("./routes/messages");
+
 const initializeSocketIO = require("./socket.io/connection");
 
 const io = new Server(server, {
@@ -49,7 +51,8 @@ app.get("/status", (req, res) => {
 });
 
 app.use("/users", usersRoutes);
-app.use('/posts' , postRoutes);
+app.use("/posts", postRoutes);
+app.use("/messages", messageRoutes);
 
 app.use((err, req, res, next) => {
   const { status = 500 } = err;
