@@ -1,14 +1,15 @@
 require("dotenv").config();
 
 const express = require("express");
+const {createServer} = require('node:http');
 const app = express();
-const mongoose = require("mongoose");
+const server = createServer(app);
+const {Server} = require('socket.io');
 
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-const usersRoutes = require("./routes/users");
-const postRoutes = require("./routes/posts");
+const mongoose = require("mongoose");
 
 mongoose
   .connect(process.env.DB_URL)
@@ -29,6 +30,20 @@ app.use(
 );
 app.use(cookieParser());
 
+const usersRoutes = require("./routes/users");
+const postRoutes = require("./routes/posts");
+const initializeSocketIO = require("./socket.io/connection");
+
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
+initializeSocketIO(io);
+
 app.get("/status", (req, res) => {
   res.json({ status: "ok" });
 });
@@ -44,6 +59,6 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });

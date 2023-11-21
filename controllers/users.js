@@ -145,3 +145,9 @@ module.exports.deleteAccount = async (req, res) => {
   await clearCookieAsync(res);
   res.json();
 };
+
+module.exports.getFollowedUsers = async (req, res) => {
+  const { user } = req;
+  const users = await User.find({ _id: { $in: user.following } });
+  res.json(users);
+};
