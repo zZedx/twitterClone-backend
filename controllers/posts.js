@@ -97,12 +97,12 @@ module.exports.deletePost = async (req, res) => {
   const { id } = req.params;
   const post = await Post.findById(id);
   const comment = await Comment.findById(id);
+  
+  const resource = post || comment;
 
-  if (!post && !comment) {
+  if (!resource) {
     return res.status(404).json({ message: "Resource not found" });
   }
-
-  const resource = post || comment;
 
   if (resource.user.toString() !== req.user._id.toString()) {
     return res.status(401).json({ message: "Unauthorized" });
