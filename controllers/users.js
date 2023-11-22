@@ -4,6 +4,7 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { cloudinary } = require("../cloudinary");
+const Message = require("../models/messages");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -146,8 +147,3 @@ module.exports.deleteAccount = async (req, res) => {
   res.json();
 };
 
-module.exports.getFollowedUsers = async (req, res) => {
-  const { user } = req;
-  const users = await User.find({ _id: { $in: user.following } });
-  res.json(users);
-};

@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
 const Post = require("./post");
 const Comment = require("./comment");
+const Message = require("./messages");
 
 const userSchema = new Schema({
   username: {
@@ -120,6 +121,10 @@ userSchema.pre("deleteOne", async function (next) {
       { comments: { $in: user.comments } },
       { $pull: { comments: { $in: user.comments } } }
     );
+    await Comment.deleteMany({ _id: { $in: user.comments } });
+    await Message.deleteMany({
+      $or: [{ to: user._id }, { from: user._id }],
+    });
   }
   next();
 });

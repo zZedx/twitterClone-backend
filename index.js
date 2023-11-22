@@ -35,6 +35,7 @@ const postRoutes = require("./routes/posts");
 const messageRoutes = require("./routes/messages");
 
 const initializeSocketIO = require("./socket.io/connection");
+const { socketJwtAuth } = require("./middlewares/isLoggedIn");
 
 const io = new Server(server, {
   cors: {
@@ -44,6 +45,7 @@ const io = new Server(server, {
   },
 });
 
+io.use(socketJwtAuth);
 initializeSocketIO(io);
 
 app.get("/status", (req, res) => {
