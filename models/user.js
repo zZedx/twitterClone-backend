@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const Post = require("./post");
 const Comment = require("./comment");
 const Message = require("./messages");
+const { cloudinary } = require("../cloudinary");
 
 const userSchema = new Schema({
   username: {
