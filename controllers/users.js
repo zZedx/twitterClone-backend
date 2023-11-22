@@ -147,3 +147,14 @@ module.exports.deleteAccount = async (req, res) => {
   res.json();
 };
 
+module.exports.getSuggestedUsers = async (req, res) => {
+  const { user } = req;
+  const users = await User.find({
+    $and: [
+      { _id: { $nin: [...user.following, user._id] } },
+      { _id: { $ne: user._id } },
+    ],
+  });
+  res.json(users);
+};
+

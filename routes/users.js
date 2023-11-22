@@ -16,7 +16,7 @@ const {
   followUnfollowUser,
   searchUsers,
   deleteAccount,
-  getFollowedUsers,
+  getSuggestedUsers,
 } = require("../controllers/users");
 
 const isLoggedIn = require("../middlewares/isLoggedIn");
@@ -26,7 +26,7 @@ router.post("/login", catchAsync(loginUser));
 router.get("/logout", isLoggedIn, catchAsync(logoutUser));
 router.get("/getUser", isLoggedIn, catchAsync(getUser));
 
-router.get("/followedUsers", isLoggedIn, catchAsync(getFollowedUsers));
+router.get("/suggestedUsers", isLoggedIn, catchAsync(getSuggestedUsers));
 
 router.get("/search/:query", isLoggedIn, catchAsync(searchUsers));
 router.put("/:username/followUnfollow", isLoggedIn, catchAsync(followUnfollowUser));
