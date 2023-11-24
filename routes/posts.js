@@ -33,7 +33,7 @@ router.post(
   upload.single("image"),
   catchAsync(createPost)
 );
-router.post("/likePost/:id", isLoggedIn, isTestAccount, catchAsync(likePost));
+router.post("/likePost/:id", isLoggedIn, catchAsync(likePost));
 router.delete("/:id", isLoggedIn, isTestAccount, catchAsync(deletePost));
 
 module.exports = router;
