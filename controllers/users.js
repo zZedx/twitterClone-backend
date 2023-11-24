@@ -111,7 +111,7 @@ module.exports.logoutUser = async (req, res) => {
 
 module.exports.getUserProfile = async (req, res) => {
   const { username } = req.params;
-  const user = await User.findOne({ username }).populate("posts");
+  const user = await User.findOne({ username }).populate("posts").populate("followers").populate("following");
   if (!user) {
     throw new Error("User not found");
   }
